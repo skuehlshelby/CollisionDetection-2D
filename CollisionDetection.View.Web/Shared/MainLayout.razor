@@ -1,0 +1,374 @@
+﻿@using Blazor.Extensions;
+@using Blazor.Extensions.Canvas;
+@using Blazor.Extensions.Canvas.Canvas2D;
+@using CollisionDetection.Model
+@using System.Configuration
+@using CollisionDetection.Presentation
+@using System.ComponentModel.DataAnnotations
+@using System.Drawing
+@using System.Timers
+
+@inject IDefaultProvider defaults;
+@inject IJSRuntime JSRuntime
+@inherits LayoutComponentBase
+@implements CollisionDetection.Presentation.ISimulationView
+
+<div class="page">
+    
+    <header>
+        <h1>On Building Collision Simulations</h1>
+        <h2>A response to Reducible's introduction to computer graphics</h2>
+        <h2>By Scott Kuehl-Shelby</h2>
+    </header>
+    
+    <section id="simulation">
+        <div id="simulationOptions">
+            <div>
+                <input type="button" class="fill" value="@Paused" @onclick="PauseOrContinue"/>
+            </div>
+
+            <div>
+                <label for="shapeCount">Number Of Shapes</label>
+                <input id="shapeCount" type="number" @bind-value="ShapeCount" min="0" max="@(defaults.GetDefault<int>(MonitoredProperty.MaximumShapeCount))"/>
+            </div>
+
+            <div>
+                <label for="fps">Frames Per Second</label>
+                <input id="fps" type="number" @bind-value="Fps" min="1" max="@(defaults.GetDefault<int>(MonitoredProperty.MaximumFrameRate))"/>
+            </div>
+
+            <div>
+                <label for="showBoundingVolumes">Show Bounding Volumes</label>
+                <input id="showBoundingVolumes" @bind-value="ShowBoundingVolumes" type="checkbox"/>
+            </div>
+
+            <div>
+                <label for="showAverageRenderTime">Show Average Render Time</label>
+                <input id="showAverageRenderTime" @bind-value="ShowAverageRenderTime" type="checkbox"/>
+            </div>
+
+            <div>
+                <label for="sceneSplitMethod">BVH Split Method:</label>
+                <select id="sceneSplitMethod" @bind="SplitMethod">
+                    @foreach (var method in defaults.GetDefault<string[]>(MonitoredProperty.AvailableSplitMethods))
+                    {
+                        <option value="@method">@method</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label for="collisionDetectionMethod">Collision Detection Method:</label>
+                <select id="collisionDetectionMethod" @bind="CollisionHandler">
+                    @foreach (var method in defaults.GetDefault<string[]>(MonitoredProperty.AvailableCollisionHandlers))
+                    {
+                        <option value="@method">@method</option>
+                    }
+                </select>
+            </div>
+        </div>
+        
+        <div id="simulationCanvas">
+            <BECanvas @ref="CanvasReference"></BECanvas>
+        </div>
+    </section>
+    
+    <section>
+
+        <section>
+            <h2>Introduction</h2>
+            <p>
+                This paper was inspired by the wonderful introduction to the topics of collision detection and 2D graphics created by YouTube video essayist 
+                <span><a href="https://www.youtube.com/channel/UCK8XIGR5kRidIw2fWqwyHRA" target="_blank">Reducible</a></span>. If you have not seen his video, I highly recommend 
+                watching it. As of this writing, the video can be found <span><a href="https://www.youtube.com/watch?v=eED4bSkYCB8" target="_blank">here</a></span>. This
+                paper's structure mirrors that of the video and covers most of the sections, but not all.
+            </p>
+        </section>
+        
+        <section>
+            <h2>Discrete Collision Detection and Response</h2>
+            <h3>Shape vs. Wall Collisions</h3>
+            <p>
+                As in Reducible's video, this simulation considers wall-shape collisions to be completely elastic. The response to such collisions
+                is also the same. Upon detecting a collision, the shape's out-of-bounds axis is selected. If the corresponding component of the shape's velocity
+                vector points out of bounds, the component's sign is inverted so it will point back in bounds. Shape movement then proceeds normally.
+            </p>
+        </section>
+        
+        <section>
+            <h2>Implementation</h2>
+        </section>
+        
+        <section>
+            <h2>Discrete Collision Detection Limitations</h2>
+        </section>
+        
+        <section>
+            <h2>Continuous Collision Detection</h2>
+        </section>
+        
+        <section>
+            <h2>Two Particle Simulations</h2>
+        </section>
+        
+        <section>
+            <h2>Scaling Up Simulations</h2>
+        </section>
+        
+        <section>
+            <h2>Bounding Volume Hierarchies</h2>
+        </section>
+        
+        <section>
+            <h2>Recap</h2>
+        </section>
+        
+        <section>
+            <h2>Future Directions</h2>
+            <p>
+                While it is highly unlikely that I will do any of them, here are several ideas for enhancements:
+                <ul>
+                    <li>Give the user the ability to fling shapes around.</li>
+                    <li>Add more types of shapes.</li>
+                    <li>Add ray-casting.</li>
+                    <li>Add BVH refitting support and store all shape references inside the BVH all of the time.</li>
+                </ul>
+            </p>
+        </section>
+
+        <section>
+            <h2>References</h2>
+            <ul>
+                <li>
+                    <a href="https://pbr-book.org/" target="_blank">The PBR Book</a>
+                    <p>
+                        Physically Based Rendering is a fantastic resource for all things rendering-related.
+                        The book, as well as the program which it is based on, are specifically designed to be a learning aid.
+                        This book was frequently a source of inspiration, specifically when designing my implementations of 
+                        Vectors, Points and Bounding Volume Hierarchies.
+                    </p>
+
+                    <p>
+                        <i>
+                            “This book has deservedly won an Academy Award. I believe it should also be nominated for a Pulitzer Prize.”
+                        </i> 
+                        - Donald Knuth
+                    </p>
+                    
+                </li>
+                <li>
+                    <a href="https://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf" target="_blank">Real Time Collision Detection</a>
+                    <p>
+                        Real Time Collision Detection, A.K.A The Orange Book, is the definitive resource for all things collision-related.
+                        From detection to resolution, this book has you covered. This book stresses that many specialized collision 
+                        detectors and resolvers should be utilized in concert, and that a one-size-fits-all collision detection
+                        system will be both very difficult to design, and probably not perform as well as one would like. It
+                        also contains mathematical formulas which were very useful when calculating collision response. It even has
+                        a formula to derive the time at which two circles will intersect, which was extremely handy.
+                    </p>
+                </li>
+                <li>
+                    <a href="https://www.youtube.com/watch?v=LPzyNOHY3A4" target="_blank">One Lone Coder: Circle Vs Circle Collisions</a>
+                    <p>
+                        This video also covers circle-circle collision response, and I found it before I found The Orange Book.
+                        For this reason, my circle-circle collision response implementation is more heavily influenced by
+                        this video rather than the Orange Book methods.
+                    </p>
+                </li>
+                <li>
+                    <a href="https://arxiv.org/pdf/2012.05348.pdf" target="_blank">Compressed Bounding Volume Hierarchies for Collision Detection & Proximity Query</a>
+                    <p>
+                        This paper introduced me to the idea that a BVH could be tested for intersecting objects within itself in a recursive manner.
+                        It provides an implementation of such an algorithm, which unfortunately did not work for me. As written, their algorithm
+                        misses approximately one in fifty collisions which would otherwise have been detected with a brute-force method. This may be
+                        due to differences in our implementations of our BVHs. That being said, I was able to use the general idea to come up
+                        with my own implementation that did work with my BVH implementation.
+                    </p>
+                </li>
+            </ul>
+        </section>
+    </section>
+
+@code
+    {
+        private int fps;
+        private int maxFps;
+        private int shapeCount;
+        private int maxShapeCount;
+        private bool showBoundingVolumes;
+        private bool showAverageRenderTime;
+        private bool paused;
+        private ISimulationPresenter presenter;
+        private Timer timer;
+        private string splitMethod;
+        private string collisionHandler;
+
+        protected Size CanvasSize { get; set; }
+
+        protected string Paused => paused ? "Continue" : "Pause";
+
+        private Canvas2DContext context;
+
+        protected BECanvasComponent CanvasReference;
+        
+
+
+        protected int Fps
+        {
+            get => fps;
+            set
+            {
+                if (0 <= value && value <= maxFps)
+                {
+                    fps = value;
+
+                    if (timer != null)
+                    {
+                        timer.Interval = 1000.0 / value;
+                    }
+                    
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.FrameRate, fps));
+                }
+            }
+        }
+
+        protected int ShapeCount
+        {
+            get => shapeCount;
+            set
+            {
+                if (0 <= value && value <= maxShapeCount)
+                {
+                    shapeCount = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.ShapeCount, shapeCount));
+                }
+            } 
+        }
+
+        protected bool ShowBoundingVolumes
+        {
+            get => showBoundingVolumes;
+            set
+            {
+                showBoundingVolumes = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.BoundingVolumeVisibility, value));
+            }
+        }
+
+        protected bool ShowAverageRenderTime
+        {
+            get => showAverageRenderTime;
+            set
+            {
+                showAverageRenderTime = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.AverageRenderTimeVisibility, value));
+            }
+        }
+
+        protected string SplitMethod
+        {
+            get => splitMethod;
+            set
+            {
+                splitMethod = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.SplitMethod, value));
+            }
+        }
+
+        protected string CollisionHandler
+        {
+            get => collisionHandler;
+            set
+            {
+                collisionHandler = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.CollisionHandler, value));
+            }
+        }
+
+        public void PauseOrContinue()
+        {
+            paused = !paused;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.Paused, paused));
+        }
+
+        private async void RenderShapes(object sender, ElapsedEventArgs e)
+        {
+            await context.BeginBatchAsync();
+            await context.ClearRectAsync(0, 0, CanvasSize.Width, CanvasSize.Height);
+            presenter.DrawScene(new GraphicsWrapper(context));
+            
+            await context.EndBatchAsync();
+        }
+
+        #region Initialization
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            paused = defaults.GetDefault<bool>(MonitoredProperty.Paused);
+
+            maxFps = defaults.GetDefault<int>(MonitoredProperty.MaximumFrameRate);
+            Fps = defaults.GetDefault<int>(MonitoredProperty.FrameRate);
+
+            maxShapeCount = defaults.GetDefault<int>(MonitoredProperty.MaximumShapeCount);
+            shapeCount = defaults.GetDefault<int>(MonitoredProperty.ShapeCount);
+
+            SplitMethod = defaults.GetDefault<string>(MonitoredProperty.SplitMethod);
+            CollisionHandler = defaults.GetDefault<string>(MonitoredProperty.CollisionHandler);
+
+            timer = new Timer(1000.0 / Fps);
+            timer.Elapsed += RenderShapes;
+            timer.Start();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                CanvasSize = new Size(await JSRuntime.InvokeAsync<int>("getSimulationWidth"), await JSRuntime.InvokeAsync<int>("getSimulationHeight"));
+                await JSRuntime.InvokeVoidAsync("setCanvasWidth", CanvasSize.Width);
+                await JSRuntime.InvokeVoidAsync("setCanvasHeight", CanvasSize.Height);
+
+                presenter = new Presenter(defaults, this);
+            }
+
+            context = await CanvasReference.CreateCanvas2DAsync();
+        }
+
+        #endregion
+
+        #region ISimulationView Members
+
+        public event EventHandler<PropertyChangedEventArgs> PropertyChanged;
+
+        public object QueryProperty(MonitoredProperty monitoredProperty)
+        {
+            if (MonitoredProperty.WorldBounds == monitoredProperty)
+            {
+                return CanvasSize;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public bool TryQueryProperty(MonitoredProperty monitoredProperty, out object value)
+        {
+            try
+            {
+                value = QueryProperty(monitoredProperty);
+                return true;
+            }
+            catch (Exception)
+            {
+                value = null;
+                return false;
+            }
+        }
+
+        #endregion
+
+    }
+</div>
