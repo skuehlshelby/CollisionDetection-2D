@@ -11,9 +11,11 @@ namespace CollisionDetection.View.Web
     public class GraphicsWrapper :IGraphics
     {
         private readonly Canvas2DContext context;
-        private bool lastDrewRectangle;
-        private bool lastDrewEllipse;
-        private bool fontSet;
+        private readonly float[] dashStyle = {2.0f, 2.0f};
+        private readonly float[] noDash = { 1.0f };
+        private float[] lastDashStyle;
+        private Color lastColor;
+        private string lastFont;
 
         public GraphicsWrapper(Canvas2DContext context)
         {
@@ -22,46 +24,59 @@ namespace CollisionDetection.View.Web
 
         public async void DrawDashedRectangle(Bounds bounds, Color color)
         {
-            if (!lastDrewRectangle)
+            if (lastDashStyle != dashStyle)
             {
-                await context.SetLineDashAsync(new[] { 4.0f, 2.0f });
+                await context.SetLineDashAsync(dashStyle);
+                lastDashStyle = dashStyle;
             }
 
-            await context.SetStrokeStyleAsync(ColorToString(color));
+            if (lastColor != color)
+            {
+                await context.SetStrokeStyleAsync(ColorToString(color));
+                lastColor = color;
+            }
+                
             await context.StrokeRectAsync(bounds.BottomLeft.X, bounds.BottomLeft.Y, bounds.Width(), bounds.Height());
-            lastDrewRectangle = true;
-            lastDrewEllipse = false;
         }
 
         public async void FillEllipse(Bounds bounds, Color color)
         {
             var center = bounds.BottomLeft.Lerp(bounds.TopRight, 1.0F / 2.0F);
 
-            if (!lastDrewEllipse)
+            if (lastDashStyle != noDash)
             {
-                await context.SetLineDashAsync(new[] { 1.0f, 0.0f });
+                await context.SetLineDashAsync(noDash);
+                lastDashStyle = noDash;
             }
             
-            await context.SetStrokeStyleAsync(ColorToString(color));
-            await context.SetFillStyleAsync(ColorToString(color));
+            if (lastColor != color)
+            {
+                string colorAsString = ColorToString(color);
+                await context.SetStrokeStyleAsync(colorAsString);
+                await context.SetFillStyleAsync(colorAsString);
+                lastColor = color;
+            }
+
             await context.BeginPathAsync();
             await context.ArcAsync(center.X, center.Y, bounds.Width() / 2, 0, 2 * Math.PI, false);
             await context.FillAsync();
             await context.StrokeAsync();
-
-            lastDrewRectangle = false;
-            lastDrewEllipse = true;
         }
 
         public async void DrawText(string text, float fontSize, FontName fontName, Color color, Point location)
         {
-            if (!fontSet)
+            if (lastFont != fontName.Name)
             {
                 await context.SetFontAsync(fontName.ToHtml(16.0F));
-                fontSet = true;
+                lastFont = fontName.Name;
             }
             
-            await context.SetFillStyleAsync(ColorToString(color));
+            if (lastColor != color)
+            {
+                await context.SetFillStyleAsync(ColorToString(color));
+                lastColor = color;
+            }
+
             await context.FillTextAsync(text, location.X, location.Y);
         }
 
