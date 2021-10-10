@@ -11,8 +11,8 @@ namespace CollisionDetection.View.Web
     public class GraphicsWrapper :IGraphics
     {
         private readonly Canvas2DContext context;
-        private readonly float[] dashStyle = {2.0f, 2.0f};
-        private readonly float[] noDash = { 1.0f };
+        private readonly float[] dashStyle = {6.0f, 2.0f};
+        private readonly float[] noDash = Array.Empty<float>();
         private float[] lastDashStyle;
         private Color lastColor;
         private string lastFont;
