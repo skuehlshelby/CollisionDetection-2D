@@ -1,9 +1,4 @@
-﻿////addEventListener("resize", function() {
-////    setCanvasWidth(getSimulationWidth());
-////    setCanvasHeight(getSimulationHeight());
-////});
-
-function getSimulationHeight() {
+﻿function getSimulationHeight() {
     return Math.floor(document.getElementById("simulationCanvas").getBoundingClientRect().height);
 }
 
