@@ -12,6 +12,7 @@
 @inject IJSRuntime JSRuntime
 @inherits LayoutComponentBase
 @implements CollisionDetection.Presentation.ISimulationView
+@implements IDisposable
 
 <div class="page">
     
@@ -68,8 +69,8 @@
             </div>
         </div>
         
-        <div id="simulationCanvas">
-            <BECanvas @ref="CanvasReference"></BECanvas>
+        <div id="canvasHolder" @ref="canvasHolder">
+            <BECanvasComponent @ref="CanvasReference"></BECanvasComponent>
         </div>
     </section>
     
@@ -212,184 +213,213 @@
 
 @code
     {
-        private int fps;
-        private int maxFps;
-        private int shapeCount;
-        private int maxShapeCount;
-        private bool showBoundingVolumes;
-        private bool showAverageRenderTime;
-        private bool paused;
-        private ISimulationPresenter presenter;
-        private Timer timer;
-        private string splitMethod;
-        private string collisionHandler;
+    private int fps;
+    private int maxFps;
+    private int shapeCount;
+    private int maxShapeCount;
+    private bool showBoundingVolumes;
+    private bool showAverageRenderTime;
+    private bool paused;
+    private ISimulationPresenter presenter;
+    private Timer timer;
+    private string splitMethod;
+    private string collisionHandler;
+    private Size canvasSize;
 
-        protected Size CanvasSize { get; set; }
-
-        protected string Paused => paused ? "Continue" : "Pause";
-
-        private Canvas2DContext context;
-
-        protected BECanvasComponent CanvasReference;
-        
-
-
-        protected int Fps
+    protected Size CanvasSize
+    {
+        get => canvasSize;
+        set
         {
-            get => fps;
-            set
+            canvasSize = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.WorldBounds, value));
+        }
+    }
+
+    protected Size WindowSize { get; set; }
+
+    protected string Paused => paused ? "Continue" : "Pause";
+
+    private Canvas2DContext context;
+
+    protected ElementReference canvasHolder;
+
+    protected BECanvasComponent CanvasReference;
+
+    public ResizeHelper helper;
+
+
+    protected int Fps
+    {
+        get => fps;
+        set
+        {
+            if (0 <= value && value <= maxFps)
             {
-                if (0 <= value && value <= maxFps)
+                fps = value;
+
+                if (timer != null)
                 {
-                    fps = value;
-
-                    if (timer != null)
-                    {
-                        timer.Interval = 1000.0 / value;
-                    }
-                    
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.FrameRate, fps));
+                    timer.Interval = 1000.0 / value;
                 }
+
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.FrameRate, fps));
             }
         }
+    }
 
-        protected int ShapeCount
+    protected int ShapeCount
+    {
+        get => shapeCount;
+        set
         {
-            get => shapeCount;
-            set
+            if (0 <= value && value <= maxShapeCount)
             {
-                if (0 <= value && value <= maxShapeCount)
-                {
-                    shapeCount = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.ShapeCount, shapeCount));
-                }
-            } 
-        }
-
-        protected bool ShowBoundingVolumes
-        {
-            get => showBoundingVolumes;
-            set
-            {
-                showBoundingVolumes = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.BoundingVolumeVisibility, value));
+                shapeCount = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.ShapeCount, shapeCount));
             }
         }
+    }
 
-        protected bool ShowAverageRenderTime
+    protected bool ShowBoundingVolumes
+    {
+        get => showBoundingVolumes;
+        set
         {
-            get => showAverageRenderTime;
-            set
-            {
-                showAverageRenderTime = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.AverageRenderTimeVisibility, value));
-            }
+            showBoundingVolumes = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.BoundingVolumeVisibility, value));
+        }
+    }
+
+    protected bool ShowAverageRenderTime
+    {
+        get => showAverageRenderTime;
+        set
+        {
+            showAverageRenderTime = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.AverageRenderTimeVisibility, value));
+        }
+    }
+
+    protected string SplitMethod
+    {
+        get => splitMethod;
+        set
+        {
+            splitMethod = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.SplitMethod, value));
+        }
+    }
+
+    protected string CollisionHandler
+    {
+        get => collisionHandler;
+        set
+        {
+            collisionHandler = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.CollisionHandler, value));
+        }
+    }
+
+    public void PauseOrContinue()
+    {
+        paused = !paused;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.Paused, paused));
+    }
+
+    private async void RenderShapes(object sender, ElapsedEventArgs e)
+    {
+        await context.BeginBatchAsync();
+        await context.ClearRectAsync(0, 0, CanvasSize.Width, CanvasSize.Height);
+        presenter.DrawScene(new GraphicsWrapper(context));
+
+        await context.EndBatchAsync();
+    }
+
+    #region Initialization
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        paused = defaults.GetDefault<bool>(MonitoredProperty.Paused);
+
+        maxFps = defaults.GetDefault<int>(MonitoredProperty.MaximumFrameRate);
+        Fps = defaults.GetDefault<int>(MonitoredProperty.FrameRate);
+
+        maxShapeCount = defaults.GetDefault<int>(MonitoredProperty.MaximumShapeCount);
+        shapeCount = defaults.GetDefault<int>(MonitoredProperty.ShapeCount);
+
+        SplitMethod = defaults.GetDefault<string>(MonitoredProperty.SplitMethod);
+        CollisionHandler = defaults.GetDefault<string>(MonitoredProperty.CollisionHandler);
+
+        timer = new Timer(1000.0 / Fps);
+        timer.Elapsed += RenderShapes;
+        timer.Start();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            CanvasSize = await ResizeHelper.GetSize(JSRuntime, canvasHolder);
+
+            helper = await ResizeHelper.Create(JSRuntime, CanvasReference.CanvasReference, CanvasSize);
+
+            helper.OnResize += OnResize;
+
+            presenter = new Presenter(defaults, this);
         }
 
-        protected string SplitMethod
+        context = await CanvasReference.CreateCanvas2DAsync();
+    }
+
+    private async void OnResize(object? sender, Size size)
+    {
+        Console.WriteLine(size);
+        await context.ClearRectAsync(0, 0, CanvasSize.Width, CanvasSize.Height);
+        CanvasSize = size;
+    }
+
+    #endregion
+
+    #region ISimulationView Members
+
+    public event EventHandler<PropertyChangedEventArgs> PropertyChanged;
+
+    public object QueryProperty(MonitoredProperty monitoredProperty)
+    {
+        if (MonitoredProperty.WorldBounds == monitoredProperty)
         {
-            get => splitMethod;
-            set
-            {
-                splitMethod = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.SplitMethod, value));
-            }
+            return CanvasSize;
         }
-
-        protected string CollisionHandler
+        else
         {
-            get => collisionHandler;
-            set
-            {
-                collisionHandler = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.CollisionHandler, value));
-            }
+            return null;
         }
+    }
 
-        public void PauseOrContinue()
+    public bool TryQueryProperty(MonitoredProperty monitoredProperty, out object value)
+    {
+        try
         {
-            paused = !paused;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(MonitoredProperty.Paused, paused));
+            value = QueryProperty(monitoredProperty);
+            return true;
         }
-
-        private async void RenderShapes(object sender, ElapsedEventArgs e)
+        catch (Exception)
         {
-            await context.BeginBatchAsync();
-            await context.ClearRectAsync(0, 0, CanvasSize.Width, CanvasSize.Height);
-            presenter.DrawScene(new GraphicsWrapper(context));
-            
-            await context.EndBatchAsync();
+            value = null;
+            return false;
         }
+    }
 
-        #region Initialization
+    #endregion
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-
-            paused = defaults.GetDefault<bool>(MonitoredProperty.Paused);
-
-            maxFps = defaults.GetDefault<int>(MonitoredProperty.MaximumFrameRate);
-            Fps = defaults.GetDefault<int>(MonitoredProperty.FrameRate);
-
-            maxShapeCount = defaults.GetDefault<int>(MonitoredProperty.MaximumShapeCount);
-            shapeCount = defaults.GetDefault<int>(MonitoredProperty.ShapeCount);
-
-            SplitMethod = defaults.GetDefault<string>(MonitoredProperty.SplitMethod);
-            CollisionHandler = defaults.GetDefault<string>(MonitoredProperty.CollisionHandler);
-
-            timer = new Timer(1000.0 / Fps);
-            timer.Elapsed += RenderShapes;
-            timer.Start();
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                CanvasSize = new Size(await JSRuntime.InvokeAsync<int>("getSimulationWidth"), await JSRuntime.InvokeAsync<int>("getSimulationHeight"));
-                await JSRuntime.InvokeVoidAsync("setCanvasWidth", CanvasSize.Width);
-                await JSRuntime.InvokeVoidAsync("setCanvasHeight", CanvasSize.Height);
-
-                presenter = new Presenter(defaults, this);
-            }
-
-            context = await CanvasReference.CreateCanvas2DAsync();
-        }
-
-        #endregion
-
-        #region ISimulationView Members
-
-        public event EventHandler<PropertyChangedEventArgs> PropertyChanged;
-
-        public object QueryProperty(MonitoredProperty monitoredProperty)
-        {
-            if (MonitoredProperty.WorldBounds == monitoredProperty)
-            {
-                return CanvasSize;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public bool TryQueryProperty(MonitoredProperty monitoredProperty, out object value)
-        {
-            try
-            {
-                value = QueryProperty(monitoredProperty);
-                return true;
-            }
-            catch (Exception)
-            {
-                value = null;
-                return false;
-            }
-        }
-
-        #endregion
+    public void Dispose()
+    {
+        helper.Dispose();
+        helper = null;
+    }
 
     }
 </div>

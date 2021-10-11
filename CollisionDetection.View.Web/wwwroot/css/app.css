@@ -20,7 +20,7 @@ body {
     background-color: #444444;
 }
 
-#simulationOptions, #simulationCanvas {
+#simulationOptions, #canvasHolder {
     background-color: #171717;
 }
 
@@ -72,24 +72,37 @@ p {
     border-top-left-radius: 10px;
 }
 
-#simulationCanvas {
+#canvasHolder {
     border-bottom-right-radius: 10px;
     border-top-right-radius: 10px;
 }
 
-/* Display */
-#simulation {
-    display: grid;
-    grid-template-columns: 1.2fr 5fr;
+#canvasHolder canvas {
+    height: 100%;
+    width: 100%;
 }
 
-#simulationOptions div {
-    display: flex;
-    justify-content: space-between;
+    /* Display */
+    /*#simulation {
+    display: grid;
+    grid-template-columns: 1.2fr 5fr;
+}*/
+    #simulationOptions div {
+        display: flex;
+        justify-content: space-between;
+    }
+
+#simulationOptions {
+    width: 25%;
+    height: 100%;
+}
+
+#canvasHolder {
+    width: 75%;
+    height: 100%;
 }
 
 /* Alignment */
-
 header {
     text-align: center;
 }
