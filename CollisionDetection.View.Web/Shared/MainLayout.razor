@@ -2,9 +2,7 @@
 @using Blazor.Extensions.Canvas;
 @using Blazor.Extensions.Canvas.Canvas2D;
 @using CollisionDetection.Model
-@using System.Configuration
 @using CollisionDetection.Presentation
-@using System.ComponentModel.DataAnnotations
 @using System.Drawing
 @using System.Timers
 
@@ -21,7 +19,16 @@
         <h2>By Scott Kuehl-Shelby</h2>
     </header>
     
-    <section id="simulation">
+<section>
+    <h2>Introduction</h2>
+    <p>
+        This project was inspired by the wonderful introduction to the topics of <span><a href="https://www.youtube.com/watch?v=eED4bSkYCB8" target="_blank">collision detection and 
+            2D graphics</a></span> created by computer science YouTuber <span><a href="https://www.youtube.com/channel/UCK8XIGR5kRidIw2fWqwyHRA" target="_blank">Reducible</a></span>. 
+        If you have not seen his video on the topic, I highly recommend it. A version of the resulting simulation can be seen below.
+    </p>
+</section>
+
+<section id="simulation">
         <div id="simulationOptions">
             <div>
                 <input type="button" class="fill" value="@Paused" @onclick="PauseOrContinue"/>
@@ -75,15 +82,7 @@
     
     <section>
 
-        <section>
-            <h2>Introduction</h2>
-            <p>
-                This paper was inspired by the wonderful introduction to the topics of collision detection and 2D graphics created by YouTube video essayist 
-                <span><a href="https://www.youtube.com/channel/UCK8XIGR5kRidIw2fWqwyHRA" target="_blank">Reducible</a></span>. If you have not seen his video, I highly recommend 
-                watching it. As of this writing, the video can be found <span><a href="https://www.youtube.com/watch?v=eED4bSkYCB8" target="_blank">here</a></span>. This
-                paper's structure mirrors that of the video and covers most of the sections, but not all.
-            </p>
-        </section>
+
         
         <section>
             <h2>Discrete Collision Detection and Response</h2>
