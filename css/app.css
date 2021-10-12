@@ -80,7 +80,7 @@ p {
 /* Display */
 #simulation {
     display: grid;
-    grid-template-columns: 1.2fr 5fr;
+    grid-template-columns: 1fr 5fr;
 }
 
 #simulationOptions div {
@@ -120,6 +120,11 @@ input[type="number"] {
     width: 100%;
 }
 
+/* Overflow */
+
+#simulation, #simulationCanvas {
+    overflow: hidden;
+}
 
 #blazor-error-ui {
     background: lightyellow;
