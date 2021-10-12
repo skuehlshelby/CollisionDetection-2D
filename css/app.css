@@ -26,7 +26,7 @@ body {
 
 /* Padding and Margins */
 body {
-    padding: 5vh 20vh;
+    padding: 5vh 25vh;
 }
 
 header {
@@ -59,6 +59,8 @@ section ul {
 
 p {
     margin: 2vh 0;
+    line-height: 2.0;
+    text-indent: 30px;
 }
 
 /* Border Radius */
@@ -80,7 +82,7 @@ p {
 /* Display */
 #simulation {
     display: grid;
-    grid-template-columns: 1fr 5fr;
+    grid-template-columns: 2fr 5fr;
 }
 
 #simulationOptions div {
@@ -100,6 +102,10 @@ header {
 
 .right {
     text-align: right;
+}
+
+.center {
+    text-align: center;
 }
 
 ul, ul * {
