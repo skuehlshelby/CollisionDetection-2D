@@ -15,31 +15,30 @@
     
     <header>
         <h1>On Building Collision Simulations</h1>
-        <h2>A response to Reducible's introduction to computer graphics</h2>
+        <h2><span><a href="https://www.youtube.com/watch?v=eED4bSkYCB8" target="_blank">A response to Reducible's introduction to computer graphics</a></span></h2>
         <h2>By Scott Kuehl-Shelby</h2>
     </header>
     
     <section>
-        <h2>Introduction</h2>
-        <p>
-            This project was inspired by the wonderful introduction to the topics of <span><a href="https://www.youtube.com/watch?v=eED4bSkYCB8" target="_blank">collision detection and 2D graphics</a></span>
-            created by computer science YouTuber <span><a href="https://www.youtube.com/channel/UCK8XIGR5kRidIw2fWqwyHRA" target="_blank">Reducible</a></span>.
-            If you have not yet seen his video, I highly recommend watching it.
+        <h3>Introduction</h3>
+        
+        <p class="center">
+            <strong>
+                <i>
+                    "This is a simulation of 250 particles moving in an enclosed space. By the end of the video, you will have a good idea of how to create
+                    something like this."
+                </i>
+            </strong> - Reducible
         </p>
 
         <p>
-            <i>
-                "This is a simulation of 250 particles moving in an enclosed space. By the end of the video, you will have a good idea of how to create
-                something like this."
-            </i> - Reducible
-        </p>
-
-        <p>
-            It was true. By the end of the video, I felt confident that I could make something like what I had just seen, and decided to do exactly that.
-            I was going to use all the techniques covered in the video. I would learn about the physics of elastic collisions, and how to make my own bounding
-            volume hierarchies, and it would be a great learning experience. It was, but nothing is easy, and this was no exception. Eventually, I succeeded.
-            You can see one version of the finished product below (there is also a desktop version!). The rest of this article details the things that
-            I didn't know, and also the things I didn't know that I didn't know.
+            It was true. By the end of that video, I thought I had a good idea of how to make a 2D particle collision simulation. I was intrigued as well
+            by Reducible's promise that, in the process of doing so, I would learn a number of foundational concepts in 2D graphics, animation, and game design. I had never made 
+            anything like this before, but I was sold. I decided that I was going to use all of the techniques covered in the video. I would learn about the physics of 
+            elastic collisions, how to efficiently detect collisions, how to respond to collisions, and how to animate those responses. And I did. Eventually.
+            You can even see a version of the finished product below (there is also a desktop version!). The rest of this article details the things that
+            I didn't know when I started, the mistakes I made along the way, and the things I didn't even know that I didn't know. The video wasn't lying, but
+            there was still a lot to learn.
         </p>
     </section>
 
