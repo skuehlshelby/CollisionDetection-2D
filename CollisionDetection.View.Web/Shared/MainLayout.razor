@@ -19,14 +19,29 @@
         <h2>By Scott Kuehl-Shelby</h2>
     </header>
     
-<section>
-    <h2>Introduction</h2>
-    <p>
-        This project was inspired by the wonderful introduction to the topics of <span><a href="https://www.youtube.com/watch?v=eED4bSkYCB8" target="_blank">collision detection and 
-            2D graphics</a></span> created by computer science YouTuber <span><a href="https://www.youtube.com/channel/UCK8XIGR5kRidIw2fWqwyHRA" target="_blank">Reducible</a></span>. 
-        If you have not seen his video on the topic, I highly recommend it. A version of the resulting simulation can be seen below.
-    </p>
-</section>
+    <section>
+        <h2>Introduction</h2>
+        <p>
+            This project was inspired by the wonderful introduction to the topics of <span><a href="https://www.youtube.com/watch?v=eED4bSkYCB8" target="_blank">collision detection and 2D graphics</a></span>
+            created by computer science YouTuber <span><a href="https://www.youtube.com/channel/UCK8XIGR5kRidIw2fWqwyHRA" target="_blank">Reducible</a></span>.
+            If you have not yet seen his video, I highly recommend watching it.
+        </p>
+
+        <p>
+            <i>
+                "This is a simulation of 250 particles moving in an enclosed space. By the end of the video, you will have a good idea of how to create
+                something like this."
+            </i> - Reducible
+        </p>
+
+        <p>
+            It was true. By the end of the video, I felt confident that I could make something like what I had just seen, and decided to do exactly that.
+            I was going to use all the techniques covered in the video. I would learn about the physics of elastic collisions, and how to make my own bounding
+            volume hierarchies, and it would be a great learning experience. It was, but nothing is easy, and this was no exception. Eventually, I succeeded.
+            You can see one version of the finished product below (there is also a desktop version!). The rest of this article details the things that
+            I didn't know, and also the things I didn't know that I didn't know.
+        </p>
+    </section>
 
 <section id="simulation">
         <div id="simulationOptions">
@@ -81,81 +96,6 @@
     </section>
     
     <section>
-
-
-        
-        <section>
-            <h2>Discrete Collision Detection and Response</h2>
-            <h3>Shape vs. Wall Collisions</h3>
-            <p>
-                As in Reducible's video, this simulation considers wall-shape collisions to be completely elastic. The response to such collisions
-                is also the same. Upon detecting a collision, the shape's out-of-bounds axis is selected. If the corresponding component of the shape's velocity
-                vector points out of bounds, the component's sign is inverted so it will point back in bounds. Shape movement then proceeds normally.
-            </p>
-        </section>
-        
-        <section>
-            <h2>Implementation</h2>
-            <p>
-
-            </p>
-        </section>
-        
-        <section>
-            <h2>Discrete Collision Detection Limitations</h2>
-            <p>
-
-            </p>
-        </section>
-        
-        <section>
-            <h2>Continuous Collision Detection</h2>
-            <p>
-
-            </p>
-        </section>
-        
-        <section>
-            <h2>Two Particle Simulations</h2>
-            <p>
-
-            </p>
-        </section>
-        
-        <section>
-            <h2>Scaling Up Simulations</h2>
-            <p>
-
-            </p>
-        </section>
-        
-        <section>
-            <h2>Bounding Volume Hierarchies</h2>
-            <p>
-
-            </p>
-        </section>
-        
-        <section>
-            <h2>Recap</h2>
-            <p>
-
-            </p>
-        </section>
-        
-        <section>
-            <h2>Future Directions</h2>
-            <p>
-                While it is highly unlikely that I will do any of them, here are several ideas for enhancements:
-                <ul>
-                    <li>Give the user the ability to fling shapes around.</li>
-                    <li>Add more types of shapes.</li>
-                    <li>Add ray-casting.</li>
-                    <li>Add BVH refitting support and store all shape references inside the BVH all of the time.</li>
-                </ul>
-            </p>
-        </section>
-
         <section>
             <h2>References</h2>
             <ul>
