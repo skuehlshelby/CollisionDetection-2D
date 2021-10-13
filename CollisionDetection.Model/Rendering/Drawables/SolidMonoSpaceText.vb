@@ -11,24 +11,22 @@ Namespace Rendering.Drawables
         Private ReadOnly _color As Color
         Private ReadOnly _location As Point
         
-        Private Sub New()
-        End Sub
-
-        Sub New(text As String, textSize As Single, color As Color, location As Point)
-            _text = text
+        Private Sub New(textSize As Single, color As Color, location As Point)
             _textSize = textSize
             _color = color
             _location = location
         End Sub
 
+        Private Sub New(text As String, template As SolidMonoSpaceText)
+            _text = text
+            _textSize = template._textSize
+            _color = template._color
+            _location = template._location
+        End Sub
+
         Protected Overrides Sub SetRequirements()
             MyBase.SetRequirements()
             RequireType(Of String)(0)
-            CouldBeType(Of Integer)(1)
-            CouldBeType(Of Single)(1)
-            CouldBeType(Of Double)(1)
-            RequireType(Of Color)(2)
-            RequireType(Of Point)(3)
         End Sub
 
         Public Sub Draw(graphics As IGraphics) Implements IDrawable.Draw
@@ -36,11 +34,11 @@ Namespace Rendering.Drawables
         End Sub
 
         Private Function GetDrawable(ParamArray args() As Object) As IDrawable Implements IDrawableFactory.GetDrawable
-            Return New SolidMonoSpaceText(CStr(args(0)), CSng(args(1)), CType(args(2), Color), CType(args(3), Point))
+            Return New SolidMonoSpaceText(CStr(args(0)), Me)
         End Function
 
-        Public Shared Function AsFactory() As IDrawableFactory
-            Return New SolidMonoSpaceText()
+        Public Shared Function AsFactory(textSize As Single, color As Color, location As Point) As IDrawableFactory
+            Return New SolidMonoSpaceText(textSize, color, location)
         End Function
     End Class
 End NameSpace

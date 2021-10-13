@@ -57,11 +57,7 @@ Namespace Rendering
 
         Private Sub AddAverageRenderTimeToScene(options As IFrameOptions)
             Dim averageTime As String = $"Average Render Time: {_averageTime:ffff}µs"
-            Dim fontSize As Single = 16.0
-            Dim color As Color = Color.CornflowerBlue
-            Dim location As Point = (5, 20)
-
-            Scene.Add(options.GetDrawingFactories().First(Function(f) f.IsApplicable(averageTime, fontSize, color, location)).GetDrawable(averageTime, fontSize, color, location))
+            Scene.Add(options.GetDrawingFactories().First(Function(f) f.IsApplicable(averageTime)).GetDrawable(averageTime))
         End Sub
 
         Private Shared Sub UpdateAverageTime(time As TimeSpan)

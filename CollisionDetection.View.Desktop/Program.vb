@@ -6,7 +6,7 @@ Module Program
     Public Sub Main()
         Application.EnableVisualStyles()
         Application.SetCompatibleTextRenderingDefault(False)
-        Application.Run(New Simulation(New FreshStart()))
+        Application.Run(New Simulation(New DesktopDefaults()))
     End Sub
 
 End Module

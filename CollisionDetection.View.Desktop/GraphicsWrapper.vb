@@ -9,7 +9,6 @@ Public Class GraphicsWrapper
     Private ReadOnly _graphics As Graphics
     Private Shared ReadOnly DashedPen As Pen = New Pen(Color.AliceBlue) With { .DashStyle = DashStyle.Dash }
     Private Shared ReadOnly SolidBrush As SolidBrush = New SolidBrush(Color.AliceBlue)
-    Private Shared ReadOnly LastFont As Font = New Font(FontFamily.GenericSerif, 16.0F)
 
     Sub New(graphics As Graphics)
         _graphics = graphics
@@ -27,6 +26,6 @@ Public Class GraphicsWrapper
 
     Public Sub DrawText(text As String, fontSize As Single, fontName As FontName, color As Color, location As Point) Implements IGraphics.DrawText
         SolidBrush.Color = color
-        _graphics.DrawString(text, LastFont, SolidBrush, location)
+        _graphics.DrawString(text, New Font(FontFamily.GenericMonospace, fontSize), SolidBrush, location)
     End Sub
 End Class
