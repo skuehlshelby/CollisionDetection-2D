@@ -309,7 +309,7 @@
         context = await CanvasReference.CreateCanvas2DAsync();
     }
 
-    private async void OnResize(object? sender, Size e)
+    private async void OnResize(object sender, Size e)
     {
         await context.ClearRectAsync(0, 0, CanvasSize.Width, CanvasSize.Height);
         CanvasSize = e;

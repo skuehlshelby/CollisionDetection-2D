@@ -4,15 +4,20 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <RootNamespace>CollisionDetection.View.Desktop</RootNamespace>
-    <StartupObject>Sub Main</StartupObject>
+    <StartupObject>CollisionDetection.View.Desktop.Program</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
     <Import Include="System.Data" />
     <Import Include="System.Drawing" />
     <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CollisionDetection.Presentation\CollisionDetection.Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
