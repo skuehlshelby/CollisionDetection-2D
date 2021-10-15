@@ -94,59 +94,66 @@
         </div>
     </section>
 
+<section>
+
     <section>
-        <section>
-            <h2>References</h2>
-            <ul>
-                <li>
-                    <a href="https://pbr-book.org/" target="_blank">The PBR Book</a>
-                    <p>
-                        Physically Based Rendering is a fantastic resource for all things rendering-related.
-                        The book, as well as the program which it is based on, are specifically designed to be a learning aid.
-                        This book was frequently a source of inspiration, specifically when designing my implementations of
-                        Vectors, Points and Bounding Volume Hierarchies.
-                    </p>
-
-                    <p>
-                        <i>
-                            “This book has deservedly won an Academy Award. I believe it should also be nominated for a Pulitzer Prize.”
-                        </i>
-                        - Donald Knuth
-                    </p>
-
-                </li>
-                <li>
-                    <a href="https://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf" target="_blank">Real Time Collision Detection</a>
-                    <p>
-                        Real Time Collision Detection, A.K.A The Orange Book, is the definitive resource for all things collision-related.
-                        From detection to resolution, this book has you covered. This book stresses that many specialized collision
-                        detectors and resolvers should be utilized in concert, and that a one-size-fits-all collision detection
-                        system will be both very difficult to design, and probably not perform as well as one would like. It
-                        also contains mathematical formulas which were very useful when calculating collision response. It even has
-                        a formula to derive the time at which two circles will intersect, which was extremely handy.
-                    </p>
-                </li>
-                <li>
-                    <a href="https://www.youtube.com/watch?v=LPzyNOHY3A4" target="_blank">One Lone Coder: Circle Vs Circle Collisions</a>
-                    <p>
-                        This video also covers circle-circle collision response, and I found it before I found The Orange Book.
-                        For this reason, my circle-circle collision response implementation is more heavily influenced by
-                        this video rather than the Orange Book methods.
-                    </p>
-                </li>
-                <li>
-                    <a href="https://arxiv.org/pdf/2012.05348.pdf" target="_blank">Compressed Bounding Volume Hierarchies for Collision Detection & Proximity Query</a>
-                    <p>
-                        This paper introduced me to the idea that a BVH could be tested for intersecting objects within itself in a recursive manner.
-                        It provides an implementation of such an algorithm, which unfortunately did not work for me. As written, their algorithm
-                        misses approximately one in fifty collisions which would otherwise have been detected with a brute-force method. This may be
-                        due to differences in our implementations of our BVHs. That being said, I was able to use the general idea to come up
-                        with my own implementation that did work with my BVH implementation.
-                    </p>
-                </li>
-            </ul>
-        </section>
+        <h2>
+            To Be Continued...
+        </h2>
     </section>
+
+    <section>
+        <h2>References</h2>
+        <ul>
+            <li>
+                <a href="https://pbr-book.org/" target="_blank">The PBR Book</a>
+                <p>
+                    Physically Based Rendering is a fantastic resource for all things rendering-related.
+                    The book, as well as the program which it is based on, are specifically designed to be a learning aid.
+                    This book was frequently a source of inspiration, specifically when designing my implementations of
+                    Vectors, Points and Bounding Volume Hierarchies.
+                </p>
+
+                <p>
+                    <i>
+                        “This book has deservedly won an Academy Award. I believe it should also be nominated for a Pulitzer Prize.”
+                    </i>
+                    - Donald Knuth
+                </p>
+
+            </li>
+            <li>
+                <a href="https://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf" target="_blank">Real Time Collision Detection</a>
+                <p>
+                    Real Time Collision Detection, A.K.A The Orange Book, is the definitive resource for all things collision-related.
+                    From detection to resolution, this book has you covered. This book stresses that many specialized collision
+                    detectors and resolvers should be utilized in concert, and that a one-size-fits-all collision detection
+                    system will be both very difficult to design, and probably not perform as well as one would like. It
+                    also contains mathematical formulas which were very useful when calculating collision response. It even has
+                    a formula to derive the time at which two circles will intersect, which was extremely handy.
+                </p>
+            </li>
+            <li>
+                <a href="https://www.youtube.com/watch?v=LPzyNOHY3A4" target="_blank">One Lone Coder: Circle Vs Circle Collisions</a>
+                <p>
+                    This video also covers circle-circle collision response, and I found it before I found The Orange Book.
+                    For this reason, my circle-circle collision response implementation is more heavily influenced by
+                    this video rather than the Orange Book methods.
+                </p>
+            </li>
+            <li>
+                <a href="https://arxiv.org/pdf/2012.05348.pdf" target="_blank">Compressed Bounding Volume Hierarchies for Collision Detection & Proximity Query</a>
+                <p>
+                    This paper introduced me to the idea that a BVH could be tested for intersecting objects within itself in a recursive manner.
+                    It provides an implementation of such an algorithm, which unfortunately did not work for me. As written, their algorithm
+                    misses approximately one in fifty collisions which would otherwise have been detected with a brute-force method. This may be
+                    due to differences in our implementations of our BVHs. That being said, I was able to use the general idea to come up
+                    with my own implementation that did work with my BVH implementation.
+                </p>
+            </li>
+        </ul>
+    </section>
+</section>
 
 @code
     {
