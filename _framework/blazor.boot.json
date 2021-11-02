@@ -30,10 +30,10 @@
       "System.Security.Cryptography.ProtectedData.dll": "sha256-YZpcx9niatONyQZCpBg1wU8yfNm9pQMlB3WoTyVZGlw=",
       "System.Security.Permissions.dll": "sha256-vrASGVckJmazzJlvwxd7ELQ4B2m4zcN8tyN\/0chCZBE=",
       "System.Windows.Extensions.dll": "sha256-RRXmoygOkBIWKnt5XucbUb6bScXeek9E6RXfovPRCk8=",
-      "CollisionDetection.Model.dll": "sha256-8hhpKgf2+7SlzrepmejAUYaQCWfJ\/0pAGRu0UN4q808=",
-      "CollisionDetection.Presentation.dll": "sha256-ARMdx\/JX6iht8pSpuHN8ymSJLaulM6z6G1ybKSI0EM0=",
-      "CollisionDetection.View.Web.dll": "sha256-DHMri6pblnBO3bj1qHAtOWbNqUTq5ScJrerId7ope2w=",
-      "Microsoft.VisualBasic.Core.dll": "sha256-\/H9lfDg9JBn9qndfO3Cer2U3qPunTK5vqE4iwfJsWIA=",
+      "CollisionDetection.Model.dll": "sha256-R6jxRdara5YJW9qwjAD2zVldzRamMIoTWlKPC31zytU=",
+      "CollisionDetection.Presentation.dll": "sha256-BPPHGGnsEUBVbQCbxnmUKx2XTS37dj2SVjOOCvtOeDc=",
+      "CollisionDetection.View.Web.dll": "sha256-L8OGOMnHCFhIfMtaTJt0JtqXNS21HdcqyxPGVtY49Yc=",
+      "Microsoft.VisualBasic.Core.dll": "sha256-tynFnzK7hHOqqyYZlhNRCtQdny9jv\/fH92MvqfvjIu0=",
       "System.Collections.Concurrent.dll": "sha256-PuMW6p56mhiMzp67AGJcXB+4LXC5pVUk73JcCzDZRug=",
       "System.Collections.Immutable.dll": "sha256-bWkmMmqAl8NfgimP2mjGsKpjArDzkstdJbntGmcnCeE=",
       "System.Collections.NonGeneric.dll": "sha256-pQD1xRAwX7KQ+u7hMYv5c+YzdiyRDt7Wef6L\/vK1gW4=",
@@ -73,7 +73,7 @@
       "System.Text.Json.dll": "sha256-FdQhey7DmflS6yDfTDQRdqiAs1LQlUk7qYujKPC8Sy8=",
       "System.Text.RegularExpressions.dll": "sha256-\/hop6gBbfdxaqDCY9rWCXZkSw1f5A6nW2r2\/NPcVnJU=",
       "System.Threading.dll": "sha256-tm5f+maqc4+xUKJbnU0M150g\/riYUcyfRK6cAggQe24=",
-      "System.Private.CoreLib.dll": "sha256-zd+dvGmHEFZ13SVVVttTwK5TL9Wb8e01O15xAKGdsXM="
+      "System.Private.CoreLib.dll": "sha256-1hYCUVEvN9Y9lfNx3Q2Z2\/68GW58IlmfjfQ14bDmzUU="
     },
     "lazyAssembly": null,
     "pdb": null,
