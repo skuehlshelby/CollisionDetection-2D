@@ -1,4 +1,4 @@
-﻿Namespace Collision
+﻿Namespace Collision.Resolvers
     Public Interface ICollisionResolver
         Inherits ISpecialized
 

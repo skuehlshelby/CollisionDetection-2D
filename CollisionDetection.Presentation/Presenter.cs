@@ -11,25 +11,27 @@ namespace CollisionDetection.Presentation
     {
         private readonly object syncLock = new();
         private readonly Queue<Action<FrameOptionsBuilder>> requests;
-        private readonly IShapeFactory shapeFactory;
         private readonly IColorTracker colorTracker;
-        private readonly ICollection<IShape> shapes;
+        private readonly ShapeCollection shapes;
+        private readonly ObservableWorldBounds worldBounds;
         private IFrameOptions frameOptions;
         private IFrame frame;
 
         public Presenter(IDefaultProvider defaultProvider, ISimulationView view)
         {
             requests = new Queue<Action<FrameOptionsBuilder>>();
-            shapes = new List<IShape>();
 
-            shapeFactory = defaultProvider.GetDefault<IShapeFactory>(MonitoredProperty.ShapeFactory);
             colorTracker = defaultProvider.GetDefault<IColorTracker>(MonitoredProperty.ColorTracker);
+
+            worldBounds = defaultProvider.GetDefault<ObservableWorldBounds>(MonitoredProperty.WorldBounds);
+
+            worldBounds.Bounds = GetWorldBoundsFromView(view);
+
+            shapes = new ShapeCollection(colorTracker, defaultProvider.GetDefault<IShapeFactory>(MonitoredProperty.ShapeFactory), defaultProvider.GetDefault<int>(MonitoredProperty.ShapeCount));
 
             frameOptions = new FrameOptionsBuilder(defaultProvider)
                 .WithWorldBounds(GetWorldBoundsFromView(view))
                 .Build();
-
-            SpawnOrRemoveShapes(defaultProvider.GetDefault<int>(MonitoredProperty.ShapeCount));
 
             frame = new Frame(shapes, frameOptions);
 
@@ -96,29 +98,25 @@ namespace CollisionDetection.Presentation
                 else if (MonitoredProperty.ColorRemoved == e.MonitoredProperty)
                     colorTracker.Remove((Color)e.Value);
                 else if (MonitoredProperty.ShapeCount == e.MonitoredProperty)
-                    SpawnOrRemoveShapes((int)e.Value);
+                {
+                    var difference = (int)e.Value - shapes.Count;
+
+                    if (difference > 0)
+                    {
+                        shapes.Add(difference);
+                    }
+                    else
+                    {
+                        shapes.Remove(Math.Abs(difference));
+                    }
+                }
                 else if (MonitoredProperty.WorldBounds == e.MonitoredProperty)
                 {
                     var size = (Size)e.Value;
-                    requests.Enqueue(b => b.WithWorldBounds(new Bounds((0, 0), (size.Width, size.Height))));
+                    var bounds = new Bounds((0, 0), (size.Width, size.Height));
+                    worldBounds.Bounds = bounds;
+                    requests.Enqueue(b => b.WithWorldBounds(bounds));
                 }
-            }
-        }
-
-        private void SpawnOrRemoveShapes(int desiredNumberOfShapes)
-        {
-            while (shapes.Count > desiredNumberOfShapes)
-            {
-                //This logic should probably be inside something else
-                Color color = colorTracker.GetMostCommonColorAndDecrementCount();
-                Circle[] circles = shapes.OfType<Circle>().ToArray();
-
-                shapes.Remove(circles.First(circle => circle.Color == color));
-            }
-
-            while (shapes.Count < desiredNumberOfShapes)
-            {
-                shapes.Add(shapeFactory.SpawnRandomly(frameOptions.GetWorldBounds()));
             }
         }
     }

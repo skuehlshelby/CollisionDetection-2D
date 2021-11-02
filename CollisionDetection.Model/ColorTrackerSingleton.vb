@@ -1,6 +1,5 @@
 ﻿Imports System.Drawing
 
-
 Public Class ColorTrackerSingleton
     Implements IColorTracker
 

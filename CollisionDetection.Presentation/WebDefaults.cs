@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CollisionDetection.Model;
-using CollisionDetection.Model.BVH;
-using CollisionDetection.Model.Collision;
 using CollisionDetection.Model.Rendering.Drawables;
 
 namespace CollisionDetection.Presentation
@@ -22,11 +17,15 @@ namespace CollisionDetection.Presentation
         {
             return new Dictionary<MonitoredProperty, IList<object>>()
             {
-                { MonitoredProperty.Paused, new List<object> { true } },
                 { MonitoredProperty.FrameRate, new List<object> { 25, "25", TimeSpan.FromSeconds(1.0 / 25.0) } },
                 { MonitoredProperty.MaximumFrameRate, new List<object> { 30, "30" } },
-                { MonitoredProperty.ShapeCount, new List<object> { 10, "10" } },
+                { MonitoredProperty.ShapeCount, new List<object> { 20, "20" } },
                 { MonitoredProperty.MaximumShapeCount, new List<object> { 60, "60" } },
+                { MonitoredProperty.MinimumShapeSize, new List<object> { 1, "1" } },
+                { MonitoredProperty.MaximumShapeSize, new List<object> { 3, "3" } },
+                { MonitoredProperty.MinimumShapeVelocity, new List<object> { -15, "-15" } },
+                { MonitoredProperty.MaximumShapeVelocity, new List<object> { 15, "15" } },
+                { MonitoredProperty.AvailableColors, new List<object> { new[] { Color.CornflowerBlue } } },
                 { MonitoredProperty.AvailableRenderers, new List<object> { new[] { SolidCircle.AsFactory(), RedDashedBounds.AsFactory(), GreenAndBlueBVH.AsFactory(), SolidMonoSpaceText.AsFactory(16.0F, Color.CornflowerBlue, (5.0F, 20.0F)) } } }
             };
         }

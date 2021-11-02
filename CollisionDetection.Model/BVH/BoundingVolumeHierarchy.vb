@@ -5,9 +5,11 @@ Namespace BVH
         Implements IBoundingVolumeHierarchy
         Implements IBoundingVolumeHierarchy(Of T)
 
+        Private Readonly _items As ICollection(Of T)
         Private ReadOnly _root As BvhBuildNode
 
         Public Sub New(items As T(), splitMethod As SplitMethod)
+            _items = items
             _root = Build(items, splitMethod)
         End Sub
 
@@ -112,9 +114,13 @@ Namespace BVH
         Private Function Generic_ObjectsThatIntersectEachOther() As IEnumerable(Of UnorderedPair(Of T)) Implements IBoundingVolumeHierarchy(Of T).ObjectsThatIntersectEachOther
             Dim results As ISet(Of UnorderedPair(Of T)) = New HashSet(Of UnorderedPair(Of T))()
 
-            If _root IsNot Nothing AndAlso Not _root.IsLeaf Then
-                ObjectsThatIntersectEachOther(_root.Left, _root.Right, results)
-            End If
+            For Each item As T In _items
+                For Each intersectingItem As T In Generic_ObjectsInsideOrPartiallyInside(item.Bounds())
+                    If Not intersectingItem.Equals(item) Then
+                        results.Add(New UnorderedPair(Of T)(item, intersectingItem))
+                    End If
+                Next
+            Next
 
             Return results
         End Function
@@ -190,10 +196,10 @@ Namespace BVH
                     For Each shape As T In node.Shapes
                         results.Add(shape)
                     Next
+                Else
+                    ObjectsInsideOrPartiallyInside(node.Left, bounds, results)
+                    ObjectsInsideOrPartiallyInside(node.Right, bounds, results)
                 End If
-
-                ObjectsInsideOrPartiallyInside(node.Left, bounds, results)
-                ObjectsInsideOrPartiallyInside(node.Right, bounds, results)
             End If
         End Sub
 

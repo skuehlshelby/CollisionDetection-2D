@@ -105,7 +105,9 @@ Public Class Simulation
         With defaultProvider
             btnPause.Text = If(.GetDefault(Of Boolean)(MonitoredProperty.Paused), "Continue", "Pause")
             btnFPS.Value = .GetDefault(Of Integer)(MonitoredProperty.FrameRate)
+            btnFPS.Maximum = .GetDefault(Of Integer)(MonitoredProperty.MaximumFrameRate)
             btnParticleCount.Value = .GetDefault(Of Integer)(MonitoredProperty.ShapeCount)
+            btnParticleCount.Maximum = .GetDefault(Of Integer)(MonitoredProperty.MaximumShapeCount)
             cbxSplitMethod.Items.AddRange(.GetDefault(Of String())(MonitoredProperty.AvailableSplitMethods))
             cbxSplitMethod.SelectedItem = .GetDefault(Of String)(MonitoredProperty.SplitMethod)
             cbxCollisionDetectionMethod.Items.AddRange(.GetDefault(Of String())(MonitoredProperty.AvailableCollisionHandlers))

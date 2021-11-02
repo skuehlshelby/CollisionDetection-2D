@@ -34,7 +34,16 @@ namespace CollisionDetection.Presentation
 
             if (!valuesByName.ContainsKey(MonitoredProperty.ShapeFactory))
             {
-                valuesByName.Add(MonitoredProperty.ShapeFactory, new List<object> { new CircleFactory(colorTracker) } );
+                var factory = new CircleFactory(colorTracker,
+                    valuesByName[MonitoredProperty.WorldBounds].OfType<Bounds>().First(),
+                    valuesByName[MonitoredProperty.MinimumShapeSize].OfType<int>().First(),
+                    valuesByName[MonitoredProperty.MaximumShapeSize].OfType<int>().First(),
+                    valuesByName[MonitoredProperty.MinimumShapeVelocity].OfType<int>().First(),
+                    valuesByName[MonitoredProperty.MaximumShapeVelocity].OfType<int>().First());
+
+                valuesByName[MonitoredProperty.WorldBounds].OfType<ObservableWorldBounds>().First().Subscribe(factory);
+
+                valuesByName.Add(MonitoredProperty.ShapeFactory, new List<object> { factory } );
             }
         }
 
@@ -53,9 +62,14 @@ namespace CollisionDetection.Presentation
                 { MonitoredProperty.FrameRate, new List<object> { 30, "30", TimeSpan.FromSeconds(1.0 / 30.0) } },
                 { MonitoredProperty.MaximumFrameRate, new List<object> { 60, "60", TimeSpan.FromSeconds(1.0 / 60.0) } },
                 { MonitoredProperty.MaximumShapeCount, new List<object> { 250, "250" } },
+                { MonitoredProperty.MinimumShapeSize, new List<object> { 5, "5" } },
+                { MonitoredProperty.MaximumShapeSize, new List<object> { 40, "40" } },
+                { MonitoredProperty.MinimumShapeVelocity, new List<object> { -40, "-40" } },
+                { MonitoredProperty.MaximumShapeVelocity, new List<object> { 40, "40" } },
                 { MonitoredProperty.Paused, new List<object> { false } },
                 { MonitoredProperty.ShapeCount, new List<object> { 0, "0" } },
-                { MonitoredProperty.SplitMethod, new List<object> { SplitMethod.Midpoint, SplitMethod.Midpoint.Name } }
+                { MonitoredProperty.SplitMethod, new List<object> { SplitMethod.Midpoint, SplitMethod.Midpoint.Name } },
+                { MonitoredProperty.WorldBounds, new List<object> { new Bounds((0, 0), (400, 400)), new ObservableWorldBounds(new Bounds((0, 0), (400, 400))) } }
             };
         }
 

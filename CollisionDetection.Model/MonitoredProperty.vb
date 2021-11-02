@@ -59,6 +59,14 @@ Public NotInheritable Class MonitoredProperty
 
     Public Shared ReadOnly Property MaximumFrameRate As MonitoredProperty = New MonitoredProperty(18, "Maximum Frame Rate")
 
+    Public Shared ReadOnly Property MinimumShapeSize As MonitoredProperty = New MonitoredProperty(19, "Minimum Shape Size")
+
+    Public Shared ReadOnly Property MaximumShapeSize As MonitoredProperty = New MonitoredProperty(20, "Maximum Shape Size")
+
+    Public Shared ReadOnly Property MinimumShapeVelocity As MonitoredProperty = New MonitoredProperty(21, "Minimum Shape Velocity")
+
+    Public Shared ReadOnly Property MaximumShapeVelocity As MonitoredProperty = New MonitoredProperty(22, "Maximum Shape Velocity")
+
 #Region "Overrides And Equality Comparison"
 
     Public Overrides Function ToString() As String

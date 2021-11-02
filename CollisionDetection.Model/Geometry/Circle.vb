@@ -1,9 +1,9 @@
 ﻿Imports System.Drawing
-Imports CollisionDetection.Model.Rendering
 
 Public NotInheritable Class Circle
     Implements IFinite
     Implements IMoveable
+    Implements IPhysical
     Implements IPointQueryable
     Implements ICloneable
     Implements IShape
@@ -35,7 +35,7 @@ Public NotInheritable Class Circle
 
     Public ReadOnly Property Diameter As Single
 
-    Public ReadOnly Property Color As Color
+    Public ReadOnly Property Color As Color Implements IShape.Color
 
     Public Function Bounds() As Bounds Implements IFinite.Bounds
         Return New Bounds((_center.X - Radius, _center.Y - Radius), (_center.X + Radius, _center.Y + Radius))
@@ -47,7 +47,7 @@ Public NotInheritable Class Circle
 
 #Region "IPointQueryable Members"
 
-    Public Function Center() As Point Implements IFinite.Center, IPointQueryable.Center
+    Public Function Center() As Point Implements IFinite.Center, IPointQueryable.Center, IPhysical.Center
         Return _center
     End Function
 
@@ -61,13 +61,17 @@ Public NotInheritable Class Circle
 
 #End Region
 
+#Region "IPhysical Members"
+
+    Public Property Velocity As Vector Implements IPhysical.Velocity
+
+    Public Property Acceleration As Vector Implements IPhysical.Acceleration
+
+    Public Property Mass As Single Implements IPhysical.Mass
+
+#End Region
+
 #Region "IMoveable Members"
-
-    Public Property Velocity As Vector Implements IMoveable.Velocity
-
-    Public Property Acceleration As Vector Implements IMoveable.Acceleration
-
-    Public Property Mass As Single Implements IMoveable.Mass
 
     Public Function CanMove() As Boolean Implements IMoveable.CanMove
         Return TimeSpan.Zero < _availableMovementTime

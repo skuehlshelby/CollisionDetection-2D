@@ -1,4 +1,5 @@
 ﻿Imports CollisionDetection.Model.BVH
+Imports CollisionDetection.Model.Collision.Detectors
 Imports CollisionDetection.Model.Collision.Detectors.Continuous
 Imports CollisionDetection.Model.Collision.Detectors.Discrete
 Imports CollisionDetection.Model.Collision.Resolvers

@@ -1,4 +1,4 @@
-﻿Namespace Collision
+﻿Namespace Collision.Detectors
     Public Interface INarrowPhaseCollisionDetector
         Inherits ISpecialized
 
