@@ -1,10 +1,8 @@
 ﻿Imports System.Reflection
-Imports System.Runtime.InteropServices
 Imports CollisionDetection.Model
 Imports CollisionDetection.Presentation
 
 Public Class Simulation
-    Implements ISimulationView
 
     Private Const Second As Integer = 1000
     Private ReadOnly _presenter As ISimulationPresenter
@@ -18,7 +16,9 @@ Public Class Simulation
 
         SetDefaults(defaults)
 
-        _presenter = New Presenter(defaults, Me)
+        _presenter = New Presenter(defaults)
+
+        OnBoundsChanged(particleArea, EventArgs.Empty)
 
         ConfigureFPSButton()
 
@@ -26,28 +26,6 @@ Public Class Simulation
 
         ConfigureTimer()
     End Sub
-
-    Public Event PropertyChanged As EventHandler(Of PropertyChangedEventArgs) Implements ISimulationView.PropertyChanged
-
-    Public Function QueryProperty(monitoredProperty As MonitoredProperty) As Object Implements ISimulationView.QueryProperty
-        Select Case monitoredProperty
-            Case MonitoredProperty.WorldBounds
-                return particleArea.DisplayRectangle.Size
-            Case Else
-                Return Nothing
-        End Select
-    End Function
-
-    Public Function TryQueryProperty(monitoredProperty As MonitoredProperty, <Out> ByRef value As Object) As Boolean Implements ISimulationView.TryQueryProperty
-        Select Case monitoredProperty
-            Case MonitoredProperty.WorldBounds
-                value = particleArea.DisplayRectangle.Size
-                Return True
-            Case Else
-                value = Nothing
-                Return False
-        End Select
-    End Function
 
 #Region "Control Configuration"
 
@@ -70,31 +48,36 @@ Public Class Simulation
 
 #Region "Event Configuration"
     Private Sub ConfigureEvents()
-        AddHandler btnParticleCount.ValueChanged, Sub() RaiseEvent PropertyChanged(Me, new PropertyChangedEventArgs(MonitoredProperty.ShapeCount, CInt(btnParticleCount.Value)))
-        AddHandler cbxShowBoundingVolumes.CheckStateChanged, Sub() RaiseEvent PropertyChanged(Me, new PropertyChangedEventArgs(MonitoredProperty.BoundingVolumeVisibility, cbxShowBoundingVolumes.Checked))
-        AddHandler cbxShowRenderTime.CheckStateChanged, Sub() RaiseEvent PropertyChanged(Me, new PropertyChangedEventArgs(MonitoredProperty.AverageRenderTimeVisibility, cbxShowRenderTime.Checked))
-        AddHandler cbxSplitMethod.SelectedValueChanged, Sub() RaiseEvent PropertyChanged(Me, new PropertyChangedEventArgs(MonitoredProperty.SplitMethod, cbxSplitMethod.SelectedItem.ToString()))
-        AddHandler cbxCollisionDetectionMethod.SelectedValueChanged, Sub() RaiseEvent PropertyChanged(Me, new PropertyChangedEventArgs(MonitoredProperty.CollisionHandler, cbxCollisionDetectionMethod.SelectedItem.ToString()))
-        AddHandler particleArea.SizeChanged, Sub() RaiseEvent PropertyChanged(Me, new PropertyChangedEventArgs(MonitoredProperty.WorldBounds, particleArea.DisplayRectangle.Size))
+        AddHandler btnParticleCount.ValueChanged, AddressOf OnShapeCountChanged
+        AddHandler cbxShowBoundingVolumes.CheckStateChanged, AddressOf OnShowBoundingVolumesChanged
+        'AddHandler cbxSplitMethod.SelectedValueChanged, Sub() RaiseEvent PropertyChanged(Me, new PropertyChangedEventArgs(MonitoredProperty.SplitMethod, cbxSplitMethod.SelectedItem.ToString()))
+        'AddHandler cbxCollisionDetectionMethod.SelectedValueChanged, Sub() RaiseEvent PropertyChanged(Me, new PropertyChangedEventArgs(MonitoredProperty.CollisionHandler, cbxCollisionDetectionMethod.SelectedItem.ToString()))
+        AddHandler particleArea.SizeChanged, AddressOf OnBoundsChanged
         AddHandler btnFPS.ValueChanged, AddressOf OnFrameRateChanged
         AddHandler btnPause.Click, AddressOf OnPauseClick
         AddHandler colorPanel.Click, AddressOf OnColorPanelClick
-        AddHandler particleArea.MouseHover, AddressOf OnMouseHover
+    End Sub
+
+    Private Sub OnBoundsChanged(sender As Object, e As EventArgs)
+        _presenter.Notify(Sub(app) app.WorldBounds = DirectCast(sender, Panel).DisplayRectangle)
+    End Sub
+
+    Private Sub OnShowBoundingVolumesChanged(sender As Object, e As EventArgs)
+        _presenter.Notify(Sub(app) app.VisualizeAccelerationStructure = DirectCast(sender, CheckBox).Checked)
+    End Sub
+
+    Private Sub OnShapeCountChanged(sender As Object, e As EventArgs)
+        _presenter.Notify(Sub(app) app.NumberOfShapes = DirectCast(sender, NumericUpDown).Value)
     End Sub
 
     Private Sub OnPauseClick(sender As Object, e As EventArgs)
         paused = Not paused
         btnPause.Text = If(paused, "Continue", "Pause")
-        RaiseEvent PropertyChanged(Me, new PropertyChangedEventArgs(MonitoredProperty.Paused, paused))
+        _presenter.Notify(Function(app) app.IsPaused = paused)
     End Sub
     
     Private Sub OnFrameRateChanged(sender As Object, e As EventArgs)
         _timer.Interval = Second \ CInt(btnFPS.Value)
-        RaiseEvent PropertyChanged(Me, new PropertyChangedEventArgs(MonitoredProperty.FrameRate, CInt(btnFPS.Value)))
-    End Sub
-
-    Private Overloads Sub OnMouseHover(sender As Object, e As EventArgs)
-        RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(MonitoredProperty.MousePosition, MousePosition))
     End Sub
 
 #End Region
@@ -137,7 +120,7 @@ Public Class Simulation
 
         AddHandler lblColor.Click, AddressOf RemoveColorOption
 
-        RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(MonitoredProperty.ColorAdded, color))
+        _presenter.Notify(Sub(app) app.ShapeColors.Add(color))
 
         colorPanel.Controls.Add(lblColor)
 
@@ -148,7 +131,7 @@ Public Class Simulation
         If colorPanel.Controls.Count > 1 AndAlso sender IsNot Nothing AndAlso TypeOf sender Is Control Then
             Dim c As Control = DirectCast(sender, Control)
 
-            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(MonitoredProperty.ColorRemoved, c.BackColor))
+            _presenter.Notify(Sub(app) app.ShapeColors.Remove(c.BackColor))
 
             colorPanel.Controls.Remove(c)
 
@@ -188,7 +171,8 @@ Public Class Simulation
     End Sub
 
     Private Sub OnParticleAreaPaint(sender As Object, e As PaintEventArgs) Handles particleArea.Paint
-        _presenter.DrawScene(New GraphicsWrapper(e.Graphics))
+        _presenter.Update(TimeSpan.FromMilliseconds(_timer.Interval))
+        _presenter.Render(New GraphicsWrapper(e.Graphics))
     End Sub
 
 End Class

@@ -9,9 +9,9 @@ Public NotInheritable Class Circle
     Implements IShape
     Implements IEquatable(Of Circle)
 
-    Private Shared lastId As Integer = 0
+    Private Shared _lastId As Integer = 0
 
-    Private ReadOnly id As Integer
+    Private ReadOnly _id As Integer
     Private _center As Point
     Private _availableMovementTime As TimeSpan
 
@@ -20,28 +20,30 @@ Public NotInheritable Class Circle
     End Sub
 
     Sub New(radius As Single, color As Color, center As Point, velocity As Vector, acceleration As Vector)
-        lastId += 1
-        id = lastId
+        _lastId += 1
+        _id = _lastId
         _center = center
         Me.Color = color
         Me.Radius = radius
         Me.Velocity = velocity
         Me.Acceleration = acceleration
-        Diameter = radius * 2
-        Mass = radius * radius
     End Sub
 
-    Public ReadOnly Property Radius As Single
+    Public Property Radius As Single
 
-    Public ReadOnly Property Diameter As Single
+    Public Readonly Property Diameter As Single
+        Get
+            Return Radius * 2
+        End Get
+    End Property
 
-    Public ReadOnly Property Color As Color Implements IShape.Color
+    Public Property Color As Color Implements IShape.Color
 
     Public Function Bounds() As Bounds Implements IFinite.Bounds
         Return New Bounds((_center.X - Radius, _center.Y - Radius), (_center.X + Radius, _center.Y + Radius))
     End Function
 
-    Public Function ICloneable_Clone() As Object Implements ICloneable.Clone
+    Public Function Clone() As Object Implements ICloneable.Clone
         Return MemberwiseClone()
     End Function
 
@@ -67,7 +69,11 @@ Public NotInheritable Class Circle
 
     Public Property Acceleration As Vector Implements IPhysical.Acceleration
 
-    Public Property Mass As Single Implements IPhysical.Mass
+    Public Readonly Property Mass As Single Implements IPhysical.Mass
+        Get
+            Return radius * radius
+        End Get
+    End Property
 
 #End Region
 
@@ -131,7 +137,7 @@ Public NotInheritable Class Circle
     End Function
 
     Public Overloads Function Equals(other As Circle) As Boolean Implements IEquatable(Of Circle).Equals
-        Return other IsNot Nothing AndAlso other.id = id
+        Return other IsNot Nothing AndAlso other._id = _id
     End Function
 
 #End Region

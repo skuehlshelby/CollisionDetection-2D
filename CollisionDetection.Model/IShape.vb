@@ -7,5 +7,5 @@ Public Interface IShape
     Inherits IPointQueryable
     Inherits ICloneable
 
-    ReadOnly Property Color As Color
+    Property Color As Color
 End Interface

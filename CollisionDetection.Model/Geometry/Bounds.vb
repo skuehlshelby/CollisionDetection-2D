@@ -159,6 +159,10 @@ Public Structure Bounds
         Return New RectangleF(bounds.BottomLeft.X, bounds.BottomLeft.Y, bounds.Width(), bounds.Height())
     End Operator
 
+    Public Shared Widening Operator CType(rect As Rectangle) As Bounds
+        Return New Bounds(rect.Location, (rect.Width, rect.Height))
+    End Operator
+
     Private Function Center() As Point Implements IFinite.Center
         Return BottomLeft.Lerp(TopRight, 1/2)
     End Function

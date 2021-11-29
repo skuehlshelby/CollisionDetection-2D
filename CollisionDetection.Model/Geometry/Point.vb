@@ -102,6 +102,10 @@ Public Structure Point
         Return New Drawing.PointF(point.X, point.Y)
     End Operator
 
+    Public Shared Widening Operator CType(point As Drawing.Point) As Point
+        Return New Point(point.X, point.Y)
+    End Operator
+
 #End Region
 
 #Region "Overrides"

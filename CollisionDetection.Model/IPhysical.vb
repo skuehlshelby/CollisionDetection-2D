@@ -6,6 +6,6 @@
 
     Property Acceleration As Vector
 
-    Property Mass As Single
+    ReadOnly Property Mass As Single
 
 End Interface
